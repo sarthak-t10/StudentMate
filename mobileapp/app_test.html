@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Management App - Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .tab-button {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #eee;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            margin-top: 10px;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .button.secondary {
+            background: #f0f0f0;
+            color: #667eea;
+            margin-top: 5px;
+        }
+
+        .button.secondary:hover {
+            background: #e8e8e8;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .response-box {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #333;
+            word-break: break-all;
+            white-space: pre-wrap;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .session-info {
+            background: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: #004085;
+        }
+
+        .session-info.logged-in {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+
+        .feature-list {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+        }
+
+        .feature-list h3 {
+            margin-bottom: 12px;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .feature-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 8px 0;
+            color: #666;
+            font-size: 14px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-list li:before {
+            content: "✓ ";
+            color: #667eea;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .divider {
+            height: 1px;
+            background: #eee;
+            margin: 20px 0;
+        }
+
+        .endpoint-info {
+            background: #f9f9f9;
+            padding: 10px;
+            border-left: 4px solid #667eea;
+            margin-bottom: 15px;
+            font-size: 12px;
+            color: #666;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏫 Campus Management</h1>
+            <p>Complete Authentication & Features Test</p>
+        </div>
+
+        <div class="card">
+            <div id="sessionInfo" class="session-info">
+                <strong>Status:</strong> Not logged in
+            </div>
+
+            <div class="tabs">
+                <button class="tab-button active" data-tab="register">Register</button>
+                <button class="tab-button" data-tab="login">Login</button>
+                <button class="tab-button" data-tab="features">Features</button>
+                <button class="tab-button" data-tab="session">Session</button>
+            </div>
+
+            <!-- REGISTER TAB -->
+            <div id="register" class="tab-content active">
+                <div class="endpoint-info">
+                    POST /api/v1/auth/register
+                </div>
+
+                <div id="registerAlert" class="alert"></div>
+                <div class="loading" id="registerLoading">
+                    <div class="spinner"></div>
+                    <p style="margin-top: 10px;">Creating account...</p>
+                </div>
+
+                <div id="registerForm">
+                    <div class="form-group">
+                        <label for="regName">Full Name</label>
+                        <input type="text" id="regName" placeholder="Enter your full name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regEmail">Email Address</label>
+                        <input type="email" id="regEmail" placeholder="your.email@example.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regPassword">Password</label>
+                        <input type="password" id="regPassword" placeholder="Minimum 6 characters" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regRole">Role</label>
+                        <select id="regRole" required>
+                            <option value="Student">Student</option>
+                            <option value="Faculty">Faculty</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                    </div>
+
+                    <button class="button" onclick="handleRegister()">Create Account</button>
+
+                    <div id="registerResponse" class="response-box" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- LOGIN TAB -->
+            <div id="login" class="tab-content">
+                <div class="endpoint-info">
+                    POST /api/v1/auth/login
+                </div>
+
+                <div id="loginAlert" class="alert"></div>
+                <div class="loading" id="loginLoading">
+                    <div class="spinner"></div>
+                    <p style="margin-top: 10px;">Logging in...</p>
+                </div>
+
+                <div id="loginForm">
+                    <div class="form-group">
+                        <label for="loginEmail">Email Address</label>
+                        <input type="email" id="loginEmail" placeholder="your.email@example.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                    </div>
+
+                    <button class="button" onclick="handleLogin()">Sign In</button>
+                    <button class="button secondary" onclick="fillTestCredentials()">Fill Test Account</button>
+
+                    <div id="loginResponse" class="response-box" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- FEATURES TAB -->
+            <div id="features" class="tab-content">
+                <div class="feature-list">
+                    <h3>Available Features</h3>
+                    <ul>
+                        <li>User Registration with role selection</li>
+                        <li>Secure Login with JWT authentication</li>
+                        <li>Session persistence (auto-login on browser refresh)</li>
+                        <li>View Announcements</li>
+                        <li>Browse Events</li>
+                        <li>Check Job Postings</li>
+                        <li>Manage User Profile</li>
+                        <li>Secure Logout</li>
+                    </ul>
+                </div>
+
+                <div class="divider"></div>
+
+                <div>
+                    <h3 style="margin-bottom: 12px;">API Endpoints</h3>
+                    <div style="font-size: 12px; color: #666; line-height: 1.8;">
+                        <div><strong>Auth:</strong></div>
+                        <div>POST /api/v1/auth/register</div>
+                        <div>POST /api/v1/auth/login</div>
+                        <div style="margin-top: 10px;"><strong>Resources:</strong></div>
+                        <div>GET /api/v1/announcements</div>
+                        <div>GET /api/v1/events</div>
+                        <div>GET /api/v1/jobs</div>
+                        <div>GET /api/v1/users/me</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SESSION TAB -->
+            <div id="session" class="tab-content">
+                <div id="sessionStatus" class="session-info">
+                    <strong>No active session</strong>
+                </div>
+
+                <div id="userDataDisplay" style="display: none;">
+                    <div style="background: #f0f0f0; padding: 12px; border-radius: 6px; margin-bottom: 15px;">
+                        <strong>Logged In User:</strong>
+                        <div id="userInfo" style="margin-top: 10px; font-size: 13px; line-height: 1.8;"></div>
+                    </div>
+                </div>
+
+                <button class="button secondary" onclick="checkSession()">Check Session</button>
+                <button class="button secondary" onclick="getAnnouncements()">Load Announcements</button>
+                <button class="button secondary" onclick="getEvents()">Load Events</button>
+                <button class="button secondary" onclick="getJobs()">Load Jobs</button>
+                <button class="button" style="background: #dc3545; margin-top: 15px;" onclick="handleLogout()">Logout</button>
+
+                <div id="sessionResponse" class="response-box" style="display: none; margin-top: 15px;"></div>
+            </div>
+        </div>
+
+        <div class="card" style="background: #f8f9fa; border-top: 4px solid #667eea;">
+            <h3 style="margin-bottom: 10px; color: #333; font-size: 14px;">📝 Test Instructions</h3>
+            <ol style="font-size: 13px; color: #666; line-height: 1.8; margin-left: 20px;">
+                <li><strong>Register:</strong> Create a new account with any email</li>
+                <li><strong>Login:</strong> Use the registered credentials to log in</li>
+                <li><strong>Session:</strong> Refresh page to verify auto-login works</li>
+                <li><strong>Features:</strong> Test announcements, events, jobs APIs</li>
+                <li><strong>Logout:</strong> Clear session and return to login</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api/v1';
+        let authToken = null;
+        let currentUser = null;
+
+        // ==================== TAB SWITCHING ====================
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const tabName = this.getAttribute('data-tab');
+                
+                document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                this.classList.add('active');
+                document.getElementById(tabName).classList.add('active');
+            });
+        });
+
+        // ==================== REGISTRATION ====================
+        async function handleRegister() {
+            const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const role = document.getElementById('regRole').value;
+
+            if (!name || !email || !password) {
+                showAlert('registerAlert', 'Please fill all fields', 'error');
+                return;
+            }
+
+            if (!email.includes('@')) {
+                showAlert('registerAlert', 'Please enter a valid email', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showAlert('registerAlert', 'Password must be at least 6 characters', 'error');
+                return;
+            }
+
+            showLoading('registerLoading', true);
+            showAlert('registerAlert', '');
+
+            try {
+                const response = await fetch(`${API_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password, role })
+                });
+
+                const data = await response.json();
+                showResponse('registerResponse', JSON.stringify(data, null, 2));
+
+                if (response.ok && data.success) {
+                    authToken = data.data.accessToken;
+                    currentUser = data.data.user;
+                    localStorage.setItem('auth_token', authToken);
+                    localStorage.setItem('user_data', JSON.stringify(currentUser));
+
+                    showAlert('registerAlert', 
+                        `✓ Account created! Welcome ${data.data.user.name}. You are now logged in.`, 
+                        'success');
+                    
+                    setTimeout(() => {
+                        document.getElementById('registerForm').style.display = 'none';
+                        updateSessionInfo();
+                    }, 1500);
+                } else {
+                    showAlert('registerAlert', data.message || 'Registration failed', 'error');
+                }
+            } catch (error) {
+                showAlert('registerAlert', 'Error: ' + error.message, 'error');
+                console.error('Register error:', error);
+            }
+
+            showLoading('registerLoading', false);
+        }
+
+        // ==================== LOGIN ====================
+        async function handleLogin() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                showAlert('loginAlert', 'Please enter email and password', 'error');
+                return;
+            }
+
+            showLoading('loginLoading', true);
+            showAlert('loginAlert', '');
+
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+                showResponse('loginResponse', JSON.stringify(data, null, 2));
+
+                if (response.ok && data.success) {
+                    authToken = data.data.accessToken;
+                    currentUser = data.data.user;
+                    localStorage.setItem('auth_token', authToken);
+                    localStorage.setItem('user_data', JSON.stringify(currentUser));
+
+                    showAlert('loginAlert', 
+                        `✓ Login successful! Welcome ${data.data.user.name}`, 
+                        'success');
+                    
+                    setTimeout(() => {
+                        document.getElementById('loginForm').style.display = 'none';
+                        updateSessionInfo();
+                    }, 1500);
+                } else {
+                    showAlert('loginAlert', data.message || 'Login failed', 'error');
+                }
+            } catch (error) {
+                showAlert('loginAlert', 'Error: ' + error.message, 'error');
+                console.error('Login error:', error);
+            }
+
+            showLoading('loginLoading', false);
+        }
+
+        // ==================== LOGOUT ====================
+        function handleLogout() {
+            authToken = null;
+            currentUser = null;
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('user_data');
+            updateSessionInfo();
+            location.reload();
+        }
+
+        // ==================== SESSION MANAGEMENT ====================
+        function restoreSession() {
+            const token = localStorage.getItem('auth_token');
+            const userData = localStorage.getItem('user_data');
+
+            if (token && userData) {
+                try {
+                    authToken = token;
+                    currentUser = JSON.parse(userData);
+                    return true;
+                } catch (e) {
+                    console.error('Session restore error:', e);
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        function updateSessionInfo() {
+            const sessionInfo = document.getElementById('sessionInfo');
+            const sessionStatus = document.getElementById('sessionStatus');
+            const userDataDisplay = document.getElementById('userDataDisplay');
+            const userInfo = document.getElementById('userInfo');
+
+            if (authToken && currentUser) {
+                sessionInfo.classList.add('logged-in');
+                sessionInfo.innerHTML = `<strong>✓ Logged In:</strong> ${currentUser.name} (${currentUser.email})`;
+                
+                sessionStatus.innerHTML = `<strong>✓ Active Session</strong><div style="margin-top: 8px; font-size: 12px;">User: ${currentUser.name}<br/>Role: ${currentUser.role}</div>`;
+                
+                userInfo.innerHTML = `
+                    <div><strong>Name:</strong> ${currentUser.name}</div>
+                    <div><strong>Email:</strong> ${currentUser.email}</div>
+                    <div><strong>Role:</strong> ${currentUser.role}</div>
+                    <div><strong>User ID:</strong> ${currentUser.id}</div>
+                    <div><strong>Token:</strong> ${authToken.substring(0, 20)}...</div>
+                `;
+                userDataDisplay.style.display = 'block';
+
+                document.getElementById('registerForm').style.display = 'none';
+                document.getElementById('loginForm').style.display = 'none';
+            } else {
+                sessionInfo.classList.remove('logged-in');
+                sessionInfo.innerHTML = '<strong>Status:</strong> Not logged in';
+                sessionStatus.innerHTML = '<strong>No active session</strong>';
+                userDataDisplay.style.display = 'none';
+
+                document.getElementById('registerForm').style.display = 'block';
+                document.getElementById('loginForm').style.display = 'block';
+            }
+        }
+
+        async function checkSession() {
+            const responseBox = document.getElementById('sessionResponse');
+            
+            if (!authToken) {
+                showResponse('sessionResponse', 'No active session. Please login first.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/users/me`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                showResponse('sessionResponse', JSON.stringify(data, null, 2));
+            } catch (error) {
+                showResponse('sessionResponse', 'Error: ' + error.message);
+            }
+        }
+
+        // ==================== API CALLS ====================
+        async function getAnnouncements() {
+            try {
+                const response = await fetch(`${API_URL}/announcements`, {
+                    headers: authToken ? { 'Authorization': `Bearer ${authToken}` } : {}
+                });
+                const data = await response.json();
+                showResponse('sessionResponse', JSON.stringify(data, null, 2));
+            } catch (error) {
+                showResponse('sessionResponse', 'Error: ' + error.message);
+            }
+        }
+
+        async function getEvents() {
+            try {
+                const response = await fetch(`${API_URL}/events`, {
+                    headers: authToken ? { 'Authorization': `Bearer ${authToken}` } : {}
+                });
+                const data = await response.json();
+                showResponse('sessionResponse', JSON.stringify(data, null, 2));
+            } catch (error) {
+                showResponse('sessionResponse', 'Error: ' + error.message);
+            }
+        }
+
+        async function getJobs() {
+            try {
+                const response = await fetch(`${API_URL}/jobs`, {
+                    headers: authToken ? { 'Authorization': `Bearer ${authToken}` } : {}
+                });
+                const data = await response.json();
+                showResponse('sessionResponse', JSON.stringify(data, null, 2));
+            } catch (error) {
+                showResponse('sessionResponse', 'Error: ' + error.message);
+            }
+        }
+
+        // ==================== UI HELPERS ====================
+        function showAlert(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            if (!message) {
+                element.classList.remove('show');
+                return;
+            }
+            element.textContent = message;
+            element.className = `alert show ${type}`;
+        }
+
+        function showResponse(elementId, content) {
+            const element = document.getElementById(elementId);
+            element.textContent = content;
+            element.style.display = 'block';
+        }
+
+        function showLoading(elementId, show) {
+            document.getElementById(elementId).style.display = show ? 'block' : 'none';
+        }
+
+        function fillTestCredentials() {
+            document.getElementById('loginEmail').value = 'flutter_test@example.com';
+            document.getElementById('loginPassword').value = 'password123';
+        }
+
+        // ==================== INITIALIZATION ====================
+        window.addEventListener('load', function() {
+            if (restoreSession()) {
+                updateSessionInfo();
+            }
+        });
+    </script>
+</body>
+</html>
