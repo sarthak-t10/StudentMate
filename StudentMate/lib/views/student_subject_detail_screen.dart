@@ -3,6 +3,7 @@ import '../models/attendance_model.dart';
 import '../models/grade_model.dart';
 import '../models/subject_model.dart';
 import '../utils/app_theme.dart';
+import '../widgets/animated_gradient_background.dart';
 
 /// Student's per-subject detail screen with "Marks" and "Attendance" tabs.
 class StudentSubjectDetailScreen extends StatelessWidget {
@@ -28,20 +29,34 @@ class StudentSubjectDetailScreen extends StatelessWidget {
           title: Text(
             subject.subjectName,
             overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1,
+            ),
           ),
           centerTitle: true,
-          bottom: const TabBar(
+          backgroundColor: Colors.black26,
+          elevation: 0,
+          bottom: TabBar(
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.white70,
+            indicatorColor: Colors.amber[700],
             tabs: [
               Tab(icon: Icon(Icons.bar_chart), text: 'Marks'),
               Tab(icon: Icon(Icons.fact_check), text: 'Attendance'),
             ],
           ),
         ),
-        body: TabBarView(
-          children: [
-            _MarksTab(grade: grade, subject: subject),
-            _AttendanceTab(attendance: attendance, subject: subject),
-          ],
+        body: AnimatedGradientBackground(
+          child: SafeArea(
+            child: TabBarView(
+              children: [
+                _MarksTab(grade: grade, subject: subject),
+                _AttendanceTab(attendance: attendance, subject: subject),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -76,13 +91,17 @@ class _MarksTab extends StatelessWidget {
           Text(
             'Not graded yet',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: AppColors.textSecondaryColor,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w800,
                 ),
           ),
           const SizedBox(height: AppSpacing.sm),
-          const Text(
+          Text(
             'Your faculty will update marks after assessments.',
-            style: TextStyle(color: AppColors.textSecondaryColor),
+            style: TextStyle(
+              color: Colors.amber[700],
+              fontWeight: FontWeight.w600,
+            ),
             textAlign: TextAlign.center,
           ),
         ],
@@ -92,8 +111,6 @@ class _MarksTab extends StatelessWidget {
 
   Widget _buildGradeDetail(BuildContext context, Grade g) {
     final gradeLetter = _getGradeLetter(g.totalMarks.toInt());
-    final Color gradeColor =
-        g.totalMarks >= 50 ? AppColors.successColor : AppColors.errorColor;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppSpacing.lg),
@@ -114,17 +131,16 @@ class _MarksTab extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text('Total Marks',
-                        style: TextStyle(color: Colors.white70, fontSize: 12)),
+                        style: TextStyle(color: Colors.black, fontSize: 12)),
                     Text(
                       '${g.totalMarks.toStringAsFixed(1)} / 100',
                       style: const TextStyle(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontSize: 28,
                           fontWeight: FontWeight.bold),
                     ),
                     Text('Credits: ${subject.credits}',
-                        style: const TextStyle(
-                            color: Colors.white70, fontSize: 12)),
+                        style: const TextStyle(color: Colors.black, fontSize: 12)),
                   ],
                 ),
                 const Spacer(),
@@ -139,7 +155,7 @@ class _MarksTab extends StatelessWidget {
                     child: Text(
                       gradeLetter,
                       style: const TextStyle(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontSize: 24,
                           fontWeight: FontWeight.bold),
                     ),
@@ -202,9 +218,16 @@ class _MarksTab extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.all(AppSpacing.md),
             decoration: BoxDecoration(
-              color: gradeColor.withValues(alpha: 0.1),
+              gradient: LinearGradient(
+                colors: [
+                  Colors.amber.shade300,
+                  Colors.amber.shade600,
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
               borderRadius: BorderRadius.circular(AppRadius.lg),
-              border: Border.all(color: gradeColor.withValues(alpha: 0.4)),
+              border: Border.all(color: Colors.amber.shade700, width: 1.5),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -212,15 +235,15 @@ class _MarksTab extends StatelessWidget {
                 Text('Grand Total',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: gradeColor,
+                          color: Colors.black,
                         )),
                 Text(
                   '${g.internalTotal.toStringAsFixed(1)}/50 + '
                   '${g.externalTotal.toStringAsFixed(1)}/50 = '
                   '${g.totalMarks.toStringAsFixed(1)}/100',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: gradeColor,
-                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w700,
                       ),
                 ),
               ],
@@ -234,7 +257,7 @@ class _MarksTab extends StatelessWidget {
   Widget _sectionTitle(BuildContext context, String title) => Text(
         title,
         style: Theme.of(context).textTheme.titleSmall?.copyWith(
-            fontWeight: FontWeight.bold, color: AppColors.purpleDark),
+    fontWeight: FontWeight.bold, color: Colors.black),
       );
 
   Widget _infoRow(BuildContext context, String label, String value) =>
@@ -243,8 +266,16 @@ class _MarksTab extends StatelessWidget {
         padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.md, vertical: AppSpacing.sm),
         decoration: BoxDecoration(
-          color: AppColors.surfaceVariant,
+          gradient: LinearGradient(
+            colors: [
+              Colors.white.withValues(alpha: 0.95),
+              Colors.blue.withValues(alpha: 0.08),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
           borderRadius: BorderRadius.circular(AppRadius.md),
+          border: Border.all(color: Colors.amber.withValues(alpha: 0.25)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -253,10 +284,10 @@ class _MarksTab extends StatelessWidget {
                 style: Theme.of(context)
                     .textTheme
                     .bodyMedium
-                    ?.copyWith(color: AppColors.textSecondaryColor)),
+                  ?.copyWith(color: Colors.black)),
             Text(value,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.bold, color: AppColors.purpleDark)),
+                    fontWeight: FontWeight.bold, color: Colors.black)),
           ],
         ),
       );
@@ -266,22 +297,33 @@ class _MarksTab extends StatelessWidget {
         padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.md, vertical: AppSpacing.sm),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          gradient: LinearGradient(
+            colors: [
+              Colors.white.withValues(alpha: 0.98),
+              Colors.purple.withValues(alpha: 0.06),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
           borderRadius: BorderRadius.circular(AppRadius.sm),
-          border:
-              Border.all(color: AppColors.purpleDark.withValues(alpha: 0.1)),
+          border: Border.all(color: Colors.amber.withValues(alpha: 0.28)),
         ),
         child: Row(
           children: [
             Expanded(
-              child:
-                  Text(c.label, style: Theme.of(context).textTheme.bodyMedium),
+              child: Text(
+                c.label,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
             ),
             Text(
               '${c.marks.toStringAsFixed(1)} / ${c.maxMarks.toStringAsFixed(0)}',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.black,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.purpleDark,
                   ),
             ),
           ],
@@ -290,17 +332,32 @@ class _MarksTab extends StatelessWidget {
 
   Widget _totalRow(
           BuildContext context, String label, double val, double max) =>
-      Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Text(
-            '$label: ${val.toStringAsFixed(1)} / ${max.toStringAsFixed(0)}',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.purpleDark,
-                ),
+      Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.sm,
+        ),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Colors.amber.shade200,
+              Colors.amber.shade500,
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-        ],
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          border: Border.all(color: Colors.amber.shade700, width: 1.5),
+        ),
+        child: Text(
+          '$label: ${val.toStringAsFixed(1)} / ${max.toStringAsFixed(0)}',
+          textAlign: TextAlign.right,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                  color: Colors.black,
+              ),
+        ),
       );
 
   String _getGradeLetter(int marks) {
@@ -336,13 +393,17 @@ class _AttendanceTab extends StatelessWidget {
             Text(
               'No attendance recorded yet.',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: AppColors.textSecondaryColor,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w800,
                   ),
             ),
             const SizedBox(height: AppSpacing.sm),
-            const Text(
+            Text(
               'Your faculty will update attendance after each class.',
-              style: TextStyle(color: AppColors.textSecondaryColor),
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.w600,
+              ),
               textAlign: TextAlign.center,
             ),
           ],
@@ -369,26 +430,27 @@ class _AttendanceTab extends StatelessWidget {
                 border: Border.all(
                     color: AppColors.errorColor.withValues(alpha: 0.4)),
               ),
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(Icons.warning_amber_rounded,
-                      color: AppColors.errorColor),
+                  const Icon(Icons.warning_amber_rounded,
+                      color: Colors.black),
                   SizedBox(width: AppSpacing.sm),
-                  Expanded(
+                  const Expanded(
                     child: Text(
                       'Attendance below 75%! Attend classes regularly to avoid detainment.',
                       style: TextStyle(
-                          color: AppColors.errorColor,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 13),
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: AppSpacing.md),
           ],
           // Stats card
+          const SizedBox(height: AppSpacing.md),
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(AppSpacing.lg),
@@ -415,25 +477,24 @@ class _AttendanceTab extends StatelessWidget {
                       children: [
                         const Text('Attendance',
                             style:
-                                TextStyle(color: Colors.white70, fontSize: 12)),
+                                TextStyle(color: Colors.black, fontSize: 12)),
                         Text(
                           '${pct.toStringAsFixed(1)}%',
                           style: const TextStyle(
-                              color: Colors.white,
+                              color: Colors.black,
                               fontSize: 40,
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
                           '${att.presentClasses} / ${att.totalClasses} classes',
-                          style: const TextStyle(
-                              color: Colors.white70, fontSize: 13),
+                          style: const TextStyle(color: Colors.black, fontSize: 13),
                         ),
                       ],
                     ),
                     const Spacer(),
                     Icon(
                       isLow ? Icons.warning_amber_rounded : Icons.check_circle,
-                      color: Colors.white,
+                      color: Colors.black,
                       size: 48,
                     ),
                   ],
@@ -460,7 +521,7 @@ class _AttendanceTab extends StatelessWidget {
           Text('Absent Dates',
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: AppColors.purpleDark,
+                    color: Colors.black,
                   )),
           const SizedBox(height: AppSpacing.sm),
           if (absentSorted.isEmpty)
@@ -470,7 +531,7 @@ class _AttendanceTab extends StatelessWidget {
                     color: AppColors.successColor, size: 16),
                 SizedBox(width: AppSpacing.xs),
                 Text('No absences recorded in this subject.',
-                    style: TextStyle(color: AppColors.textSecondaryColor)),
+                  style: TextStyle(color: Colors.black)),
               ],
             )
           else
@@ -491,7 +552,7 @@ class _AttendanceTab extends StatelessWidget {
                       child: Text(d,
                           style: const TextStyle(
                               fontSize: 12,
-                              color: AppColors.errorColor,
+                            color: Colors.black,
                               fontWeight: FontWeight.w500)),
                     ),
                   )
@@ -521,8 +582,7 @@ class _AttendanceTab extends StatelessWidget {
                 canMiss > 0
                     ? 'You can miss $canMiss more class${canMiss == 1 ? '' : 'es'} while staying above 75%.'
                     : 'Attend all upcoming classes to maintain 75%.',
-                style: const TextStyle(
-                    fontSize: 12, color: AppColors.textSecondaryColor),
+                style: const TextStyle(fontSize: 12, color: Colors.black),
               ),
             ),
           ],
@@ -544,8 +604,7 @@ class _AttendanceTab extends StatelessWidget {
             Expanded(
               child: Text(
                 'Attend $needed consecutive class${needed == 1 ? '' : 'es'} to reach 75%.',
-                style: const TextStyle(
-                    fontSize: 12, color: AppColors.textSecondaryColor),
+                style: const TextStyle(fontSize: 12, color: Colors.black),
               ),
             ),
           ],

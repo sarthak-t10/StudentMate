@@ -17,7 +17,9 @@
 			"type": "shell",
 			"command": "flutter",
 			"args": [
-				"run"
+				"run",
+				"-d",
+				"windows"
 			],
 			"isBackground": true,
 			"group": "build"

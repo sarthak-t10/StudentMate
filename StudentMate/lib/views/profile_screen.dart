@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../main.dart';
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
@@ -6,6 +7,7 @@ import '../services/theme_service.dart';
 import '../utils/app_theme.dart';
 import '../utils/responsive_helper.dart';
 import '../widgets/custom_widgets.dart';
+import '../widgets/animated_gradient_background.dart';
 
 class ProfileScreen extends StatefulWidget {
   final User? initialUser;
@@ -102,166 +104,245 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final isMobile = responsive.isSmallPhone;
 
     if (_loadingUser) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
-
-    if (_currentUser == null) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('Profile')),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.person_off, size: 64, color: Colors.grey),
-              const SizedBox(height: 16),
-              const Text('No user information available'),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: () => Navigator.pushNamed(context, '/signin'),
-                child: const Text('Sign In'),
-              ),
-            ],
+      return AnimatedGradientBackground(
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: const Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFFD700)),
+            ),
           ),
         ),
       );
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile & Settings'),
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // Profile Header
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(
-                horizontal: isMobile ? 16 : 32,
-                vertical: 32,
+    if (_currentUser == null) {
+      return AnimatedGradientBackground(
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            backgroundColor: Colors.black26,
+            elevation: 0,
+            title: Text(
+              'Profile',
+              style: GoogleFonts.orbitron(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
               ),
-              decoration: BoxDecoration(
-                gradient: AppColors.primaryGradient,
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(24),
-                  bottomRight: Radius.circular(24),
+            ),
+          ),
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.person_off, size: 64, color: Colors.white54),
+                const SizedBox(height: 16),
+                Text(
+                  'No user information available',
+                  style: GoogleFonts.orbitron(
+                    color: Colors.white70,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () => Navigator.pushNamed(context, '/signin'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFFFD700),
+                  ),
+                  child: Text(
+                    'Sign In',
+                    style: GoogleFonts.orbitron(
+                      color: Colors.black87,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    return AnimatedGradientBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.black26,
+          elevation: 0,
+          title: Text(
+            'Profile & Settings',
+            style: GoogleFonts.orbitron(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1,
+            ),
+          ),
+        ),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              // Profile Header
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(
+                  horizontal: isMobile ? 16 : 32,
+                  vertical: 32,
+                ),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.blue.withOpacity(0.2),
+                      Colors.purple.withOpacity(0.2),
+                    ],
+                  ),
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(24),
+                    bottomRight: Radius.circular(24),
+                  ),
+                  border: Border(
+                    bottom: BorderSide(
+                      color: Colors.white24,
+                      width: 1,
+                    ),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    ProfileAvatar(
+                      name: _currentUser!.fullName,
+                      base64Photo: _currentUser!.userPhotoUrl,
+                      size: 80,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      _currentUser!.fullName,
+                      style: GoogleFonts.orbitron(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      _currentUser!.email,
+                      style: GoogleFonts.orbitron(
+                        fontSize: 12,
+                        color: Colors.white70,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFD700).withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: const Color(0xFFFFD700),
+                          width: 1,
+                        ),
+                      ),
+                      child: Text(
+                        _currentUser!.userType
+                            .toString()
+                            .split('.')
+                            .last
+                            .toUpperCase(),
+                        style: GoogleFonts.orbitron(
+                          fontSize: 11,
+                          color: const Color(0xFFFFD700),
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              child: Column(
-                children: [
-                  ProfileAvatar(
-                    name: _currentUser!.fullName,
-                    base64Photo: _currentUser!.userPhotoUrl,
-                    size: 80,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    _currentUser!.fullName,
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    _currentUser!.email,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.white70,
-                        ),
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      _currentUser!.userType
-                          .toString()
-                          .split('.')
-                          .last
-                          .toUpperCase(),
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
 
-            const SizedBox(height: 24),
+              const SizedBox(height: 24),
 
-            // User Details Section
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: isMobile ? 16 : 32,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Account Details',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 16),
-                  _buildDetailCard(
-                    icon: Icons.school,
-                    title: 'Branch',
-                    value: _currentUser!.branch,
-                  ),
-                  const SizedBox(height: 12),
-                  _buildDetailCard(
-                    icon: Icons.groups,
-                    title: 'Section',
-                    value: _currentUser!.section,
-                  ),
-                  const SizedBox(height: 12),
-                  _buildDetailCard(
-                    icon: Icons.email,
-                    title: 'Email',
-                    value: _currentUser!.email,
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 32),
-
-            // Theme Settings Section
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: isMobile ? 16 : 32,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Theme Settings',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 16),
-                  Card(
-                    elevation: 2,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+              // User Details Section
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isMobile ? 16 : 32,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Account Details',
+                      style: GoogleFonts.orbitron(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        letterSpacing: 0.5,
+                      ),
                     ),
-                    child: Padding(
+                    const SizedBox(height: 16),
+                    _buildDetailCard(
+                      icon: Icons.school,
+                      title: 'Branch',
+                      value: _currentUser!.branch,
+                    ),
+                    const SizedBox(height: 12),
+                    _buildDetailCard(
+                      icon: Icons.groups,
+                      title: 'Section',
+                      value: _currentUser!.section,
+                    ),
+                    const SizedBox(height: 12),
+                    _buildDetailCard(
+                      icon: Icons.email,
+                      title: 'Email',
+                      value: _currentUser!.email,
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 32),
+
+              // Theme Settings Section
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isMobile ? 16 : 32,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Theme Settings',
+                      style: GoogleFonts.orbitron(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Container(
                       padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.white24),
+                        color: Colors.white.withOpacity(0.05),
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             'Select Theme',
-                            style: Theme.of(context).textTheme.titleMedium,
+                            style: GoogleFonts.orbitron(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
                           ),
                           const SizedBox(height: 16),
                           _buildThemeOption(
@@ -288,36 +369,65 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ],
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
 
-            const SizedBox(height: 32),
+              const SizedBox(height: 32),
 
-            // Logout Section
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: isMobile ? 16 : 32,
-                vertical: 24,
-              ),
-              child: SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: ElevatedButton.icon(
-                  onPressed: _logout,
-                  icon: const Icon(Icons.logout),
-                  label: const Text('Logout'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.errorColor,
-                    foregroundColor: Colors.white,
+              // Logout Section
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isMobile ? 16 : 32,
+                  vertical: 24,
+                ),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      gradient: const LinearGradient(
+                        colors: [Colors.red, Colors.redAccent],
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.red.withOpacity(0.3),
+                          blurRadius: 15,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: _logout,
+                        borderRadius: BorderRadius.circular(12),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.logout, color: Colors.white),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Logout',
+                              style: GoogleFonts.orbitron(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
 
-            const SizedBox(height: 32),
-          ],
+              const SizedBox(height: 32),
+            ],
+          ),
         ),
       ),
     );
@@ -331,12 +441,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(color: Colors.white24),
         borderRadius: BorderRadius.circular(8),
+        color: Colors.white.withOpacity(0.05),
       ),
       child: Row(
         children: [
-          Icon(icon, color: AppColors.purpleDark, size: 24),
+          Icon(icon, color: const Color(0xFFFFD700), size: 24),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -344,17 +455,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 Text(
                   title,
-                  style: AppTextStyles.blueGradient(
-                    fontSize: 12,
+                  style: GoogleFonts.orbitron(
+                    fontSize: 11,
                     fontWeight: FontWeight.w600,
+                    color: Colors.white54,
+                    letterSpacing: 0.5,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   value,
-                  style: AppTextStyles.blueGradient(
-                    fontSize: 14,
+                  style: GoogleFonts.orbitron(
+                    fontSize: 13,
                     fontWeight: FontWeight.w600,
+                    color: Colors.white,
                   ),
                 ),
               ],
@@ -379,11 +493,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           border: Border.all(
-            color: isSelected ? AppColors.purpleDark : Colors.grey.shade300,
+            color: isSelected ? const Color(0xFFFFD700) : Colors.white24,
             width: isSelected ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(8),
-          color: isSelected ? AppColors.purpleDark.withOpacity(0.05) : null,
+          color: isSelected
+              ? const Color(0xFFFFD700).withOpacity(0.1)
+              : Colors.white.withOpacity(0.03),
         ),
         child: Row(
           children: [
@@ -392,9 +508,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
               height: 48,
               decoration: BoxDecoration(
                 gradient: mode == AppThemeMode.light
-                    ? AppColors.primaryGradient
+                    ? const LinearGradient(
+                        colors: [
+                          Color(0xFF2246FF),
+                          Color(0xFF8a2be2),
+                        ],
+                      )
                     : mode == AppThemeMode.goldDark
-                        ? AppColors.darkModePrimaryGradient
+                        ? const LinearGradient(
+                            colors: [
+                              Color(0xFFFFD700),
+                              Color(0xFFFFA500),
+                            ],
+                          )
                         : LinearGradient(
                             colors: [
                               Colors.grey.shade800,
@@ -412,28 +538,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: [
                   Text(
                     title,
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                    style: GoogleFonts.orbitron(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      letterSpacing: 0.5,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     description,
-                    style: Theme.of(context).textTheme.bodySmall,
+                    style: GoogleFonts.orbitron(
+                      fontSize: 11,
+                      color: Colors.white54,
+                    ),
                   ),
                 ],
               ),
             ),
             if (isSelected)
-              Icon(
+              const Icon(
                 Icons.check_circle,
-                color: AppColors.purpleDark,
+                color: Color(0xFFFFD700),
                 size: 24,
               )
             else
               Icon(
                 Icons.radio_button_unchecked,
-                color: Colors.grey.shade400,
+                color: Colors.white54,
                 size: 24,
               ),
           ],

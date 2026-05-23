@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../models/attendance_model.dart';
 import '../models/grade_model.dart';
 import '../models/subject_model.dart';
@@ -10,6 +11,7 @@ import '../utils/app_theme.dart';
 import '../utils/responsive_helper.dart';
 import '../widgets/custom_widgets.dart';
 import '../widgets/responsive_layout_components.dart';
+import '../widgets/animated_gradient_background.dart';
 import 'student_subject_detail_screen.dart';
 import 'timetable_screen.dart';
 
@@ -116,277 +118,293 @@ class _AcademicsScreenState extends State<AcademicsScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: const AppLogo(),
-        title: const Text('Academics'),
+        title: Text(
+          'Academics',
+          style: GoogleFonts.orbitron(
+            color: Colors.black,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1,
+          ),
+        ),
         centerTitle: true,
+        backgroundColor: Colors.black26,
+        elevation: 0,
       ),
-      body: SafeArea(
-        child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : ResponsiveBuilder(
-                builder: (context, responsive) {
-                  return SingleChildScrollView(
-                    child: Padding(
-                      padding: EdgeInsets.all(responsive.horizontalPadding),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Select Semester',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleLarge
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: responsive.titleFontSize,
-                                ),
-                          ),
-                          SizedBox(height: responsive.spacingMedium),
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: List.generate(8, (index) {
-                                final semester = index + 1;
-                                final isSelected =
-                                    _selectedSemester == semester;
-                                return Padding(
-                                  padding: EdgeInsets.only(
-                                      right: responsive.spacingMedium),
-                                  child: GestureDetector(
-                                    onTap: () =>
-                                        _loadSubjectsForSemester(semester),
-                                    child: Container(
-                                      width:
-                                          responsive.isMediumScreen ? 65 : 60,
-                                      height:
-                                          responsive.isMediumScreen ? 65 : 60,
-                                      decoration: BoxDecoration(
-                                        gradient: isSelected
-                                            ? AppColors.primaryGradient
-                                            : const LinearGradient(
-                                                colors: [
-                                                  Colors.white,
-                                                  Colors.white
-                                                ],
-                                              ),
-                                        borderRadius: BorderRadius.circular(
-                                            responsive.radiusMedium),
-                                        border: Border.all(
-                                          color: isSelected
-                                              ? Colors.transparent
-                                              : AppColors.purpleDark
-                                                  .withValues(alpha: 0.2),
-                                        ),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          'S$semester',
-                                          style: TextStyle(
+      body: AnimatedGradientBackground(
+        child: SafeArea(
+          child: _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : ResponsiveBuilder(
+                  builder: (context, responsive) {
+                    return SingleChildScrollView(
+                      child: Padding(
+                        padding: EdgeInsets.all(responsive.horizontalPadding),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Select Semester',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w900,
+                                fontSize: responsive.titleFontSize,
+                                color: Colors.black,
+                                letterSpacing: 1,
+                              ),
+                            ),
+                            SizedBox(height: responsive.spacingMedium),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: List.generate(8, (index) {
+                                  final semester = index + 1;
+                                  final isSelected =
+                                      _selectedSemester == semester;
+                                  return Padding(
+                                    padding: EdgeInsets.only(
+                                        right: responsive.spacingMedium),
+                                    child: GestureDetector(
+                                      onTap: () =>
+                                          _loadSubjectsForSemester(semester),
+                                      child: Container(
+                                        width:
+                                            responsive.isMediumScreen ? 65 : 60,
+                                        height:
+                                            responsive.isMediumScreen ? 65 : 60,
+                                        decoration: BoxDecoration(
+                                          gradient: isSelected
+                                              ? AppColors.primaryGradient
+                                              : const LinearGradient(
+                                                  colors: [
+                                                    Colors.white,
+                                                    Colors.white
+                                                  ],
+                                                ),
+                                          borderRadius: BorderRadius.circular(
+                                              responsive.radiusMedium),
+                                          border: Border.all(
                                             color: isSelected
-                                                ? Colors.white
-                                                : AppColors.purpleDark,
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: responsive.isMediumScreen
-                                                ? 15
-                                                : 13,
+                                                ? Colors.transparent
+                                                : AppColors.purpleDark
+                                                    .withValues(alpha: 0.2),
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            'S$semester',
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w700,
+                                              fontSize:
+                                                  responsive.isMediumScreen
+                                                      ? 15
+                                                      : 13,
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
+                                  );
+                                }),
+                              ),
+                            ),
+                            SizedBox(height: responsive.spacingLarge),
+                            // Low attendance warning across all subjects
+                            if (_attendanceRecords
+                                .any((a) => a.isLowAttendance)) ...[
+                              _buildLowAttendanceBanner(responsive),
+                              SizedBox(height: responsive.spacingMedium),
+                            ],
+                            Text(
+                              'Subjects — Semester $_selectedSemester',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w900,
+                                fontSize: responsive.titleFontSize,
+                                color: Colors.black,
+                                letterSpacing: 1,
+                              ),
+                            ),
+                            SizedBox(height: responsive.spacingMedium),
+                            if (_catalogSubjects.isEmpty)
+                              Center(
+                                child: Text(
+                                  'No subjects available for Semester $_selectedSemester.\nAsk your admin to add subjects.',
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                ),
+                              )
+                            else
+                              ..._catalogSubjects.map((subject) {
+                                final grade = _gradeFor(subject.subjectName);
+                                final att = _attendanceFor(subject.subjectName);
+                                return Padding(
+                                  padding: EdgeInsets.only(
+                                      bottom: responsive.spacingMedium),
+                                  child: _buildSubjectCard(
+                                      context, subject, grade, att, responsive),
                                 );
                               }),
-                            ),
-                          ),
-                          SizedBox(height: responsive.spacingLarge),
-                          // Low attendance warning across all subjects
-                          if (_attendanceRecords
-                              .any((a) => a.isLowAttendance)) ...[
-                            _buildLowAttendanceBanner(responsive),
-                            SizedBox(height: responsive.spacingMedium),
-                          ],
-                          Text(
-                            'Subjects — Semester $_selectedSemester',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleLarge
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: responsive.titleFontSize,
-                                ),
-                          ),
-                          SizedBox(height: responsive.spacingMedium),
-                          if (_catalogSubjects.isEmpty)
-                            Center(
-                              child: Text(
-                                'No subjects available for Semester $_selectedSemester.\nAsk your admin to add subjects.',
-                                textAlign: TextAlign.center,
-                                style: Theme.of(context).textTheme.bodyMedium,
+                            SizedBox(height: responsive.spacingLarge),
+                            Text(
+                              'CGPA Calculator',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w900,
+                                fontSize: responsive.titleFontSize,
+                                color: Colors.black,
+                                letterSpacing: 1,
                               ),
-                            )
-                          else
-                            ..._catalogSubjects.map((subject) {
-                              final grade = _gradeFor(subject.subjectName);
-                              final att = _attendanceFor(subject.subjectName);
-                              return Padding(
-                                padding: EdgeInsets.only(
-                                    bottom: responsive.spacingMedium),
-                                child: _buildSubjectCard(
-                                    context, subject, grade, att, responsive),
-                              );
-                            }),
-                          SizedBox(height: responsive.spacingLarge),
-                          Text(
-                            'CGPA Calculator',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleLarge
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: responsive.titleFontSize,
-                                ),
-                          ),
-                          SizedBox(height: responsive.spacingMedium),
-                          GradientCard(
-                            child: Column(
-                              children: [
-                                Container(
-                                  width: responsive.isMediumScreen ? 140 : 120,
-                                  height: responsive.isMediumScreen ? 140 : 120,
-                                  decoration: BoxDecoration(
-                                    gradient: AppColors.primaryGradient,
-                                    borderRadius: BorderRadius.circular(
-                                        responsive.avatarSize),
+                            ),
+                            SizedBox(height: responsive.spacingMedium),
+                            GradientCard(
+                              child: Column(
+                                children: [
+                                  Container(
+                                    width:
+                                        responsive.isMediumScreen ? 140 : 120,
+                                    height:
+                                        responsive.isMediumScreen ? 140 : 120,
+                                    decoration: BoxDecoration(
+                                      gradient: AppColors.primaryGradient,
+                                      borderRadius: BorderRadius.circular(
+                                          responsive.avatarSize),
+                                    ),
+                                    child: Center(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            'CGPA',
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize:
+                                                  responsive.bodyFontSize,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                              height: responsive.spacingSmall),
+                                          Text(
+                                            _calculateCGPA().toStringAsFixed(2),
+                                            style: TextStyle(
+                                              fontSize:
+                                                  responsive.isMediumScreen
+                                                      ? 40
+                                                      : 36,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                          Text(
+                                            '/ 10',
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize:
+                                                  responsive.smallFontSize,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
-                                  child: Center(
+                                  SizedBox(height: responsive.spacingLarge),
+                                  Text(
+                                    'Calculated on a 10-point scale based on all graded subjects.',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: responsive.smallFontSize,
+                                      color: Colors.amber[700],
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: responsive.spacingLarge),
+                            Text(
+                              'Timetable',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w900,
+                                fontSize: responsive.titleFontSize,
+                                color: Colors.black,
+                                letterSpacing: 1,
+                              ),
+                            ),
+                            SizedBox(height: responsive.spacingMedium),
+                            GradientCard(
+                              onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => const TimetableScreen()),
+                              ),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(
+                                        responsive.spacingMedium),
+                                    decoration: BoxDecoration(
+                                      gradient: AppColors.primaryGradient,
+                                      borderRadius: BorderRadius.circular(
+                                          responsive.radiusMedium),
+                                    ),
+                                    child: Icon(Icons.table_chart,
+                                        color: Colors.white,
+                                        size: responsive.isMediumScreen
+                                            ? 30
+                                            : 28),
+                                  ),
+                                  SizedBox(width: responsive.spacingMedium),
+                                  Expanded(
                                     child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          'CGPA',
+                                          'View My Timetable',
                                           style: Theme.of(context)
                                               .textTheme
-                                              .bodySmall
+                                              .titleMedium
                                               ?.copyWith(
-                                                color: Colors.white,
+                                                fontWeight: FontWeight.w600,
                                                 fontSize:
                                                     responsive.bodyFontSize,
+                                                color: Colors.black,
                                               ),
                                         ),
-                                        SizedBox(
-                                            height: responsive.spacingSmall),
                                         Text(
-                                          _calculateCGPA().toStringAsFixed(2),
-                                          style: TextStyle(
-                                            fontSize: responsive.isMediumScreen
-                                                ? 40
-                                                : 36,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                        Text(
-                                          '/ 10',
+                                          'See your class schedule for this section',
                                           style: Theme.of(context)
                                               .textTheme
                                               .bodySmall
                                               ?.copyWith(
-                                                color: Colors.white70,
                                                 fontSize:
                                                     responsive.smallFontSize,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.w500,
                                               ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                ),
-                                SizedBox(height: responsive.spacingLarge),
-                                Text(
-                                  'Calculated on a 10-point scale based on all graded subjects.',
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
-                                      ?.copyWith(
-                                        fontSize: responsive.smallFontSize,
-                                      ),
-                                ),
-                              ],
+                                  const Icon(Icons.arrow_forward_ios,
+                                      size: 16, color: Colors.amber),
+                                ],
+                              ),
                             ),
-                          ),
-                          SizedBox(height: responsive.spacingLarge),
-                          Text(
-                            'Timetable',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleLarge
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: responsive.titleFontSize,
-                                ),
-                          ),
-                          SizedBox(height: responsive.spacingMedium),
-                          GradientCard(
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => const TimetableScreen()),
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  padding:
-                                      EdgeInsets.all(responsive.spacingMedium),
-                                  decoration: BoxDecoration(
-                                    gradient: AppColors.primaryGradient,
-                                    borderRadius: BorderRadius.circular(
-                                        responsive.radiusMedium),
-                                  ),
-                                  child: Icon(Icons.table_chart,
-                                      color: Colors.white,
-                                      size:
-                                          responsive.isMediumScreen ? 30 : 28),
-                                ),
-                                SizedBox(width: responsive.spacingMedium),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'View My Timetable',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium
-                                            ?.copyWith(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: responsive.bodyFontSize,
-                                            ),
-                                      ),
-                                      Text(
-                                        'See your class schedule for this section',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall
-                                            ?.copyWith(
-                                              fontSize:
-                                                  responsive.smallFontSize,
-                                            ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const Icon(Icons.arrow_forward_ios,
-                                    size: 16, color: AppColors.purpleDark),
-                              ],
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                },
-              ),
+                    );
+                  },
+                ),
+        ),
       ),
     );
   }
@@ -457,10 +475,10 @@ class _AcademicsScreenState extends State<AcademicsScreen> {
               Expanded(
                 child: Text(
                   subject.subjectName,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        fontSize: responsive.bodyFontSize,
-                      ),
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w800,
+                  ).copyWith(fontSize: responsive.bodyFontSize),
                 ),
               ),
               if (attLow)
@@ -475,7 +493,14 @@ class _AcademicsScreenState extends State<AcademicsScreen> {
                   vertical: responsive.spacingSmall,
                 ),
                 decoration: BoxDecoration(
-                  gradient: hasGrade ? AppColors.primaryGradient : null,
+                  gradient: hasGrade
+                      ? LinearGradient(
+                          colors: [
+                            Colors.amber.shade300,
+                            Colors.amber.shade600,
+                          ],
+                        )
+                      : null,
                   color: hasGrade ? null : AppColors.surfaceVariant,
                   borderRadius: BorderRadius.circular(responsive.radiusMedium),
                 ),
@@ -485,8 +510,8 @@ class _AcademicsScreenState extends State<AcademicsScreen> {
                       : 'N/A',
                   style: TextStyle(
                     color:
-                        hasGrade ? Colors.white : AppColors.textSecondaryColor,
-                    fontWeight: FontWeight.bold,
+                        hasGrade ? Colors.black : Colors.black,
+                    fontWeight: FontWeight.w900,
                     fontSize: responsive.smallFontSize,
                   ),
                 ),
@@ -507,6 +532,8 @@ class _AcademicsScreenState extends State<AcademicsScreen> {
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         fontSize: responsive.smallFontSize,
+                    color: Colors.black,
+                        fontWeight: FontWeight.w600,
                       ),
                 ),
               ),
@@ -524,10 +551,9 @@ class _AcademicsScreenState extends State<AcademicsScreen> {
                       'Att: ${attPct.toStringAsFixed(0)}%',
                       style: TextStyle(
                         fontSize: responsive.smallFontSize,
-                        fontWeight: FontWeight.w600,
-                        color: attLow
-                            ? AppColors.errorColor
-                            : AppColors.successColor,
+                        fontWeight: FontWeight.w800,
+                        color:
+                            attLow ? AppColors.errorColor : Colors.amber[700],
                       ),
                     ),
                   ],
@@ -539,6 +565,8 @@ class _AcademicsScreenState extends State<AcademicsScreen> {
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         fontSize: responsive.smallFontSize,
+                    color: Colors.black,
+                        fontWeight: FontWeight.w600,
                       ),
                 ),
             ],
@@ -550,13 +578,13 @@ class _AcademicsScreenState extends State<AcademicsScreen> {
               Text(
                 'Tap to view marks & attendance',
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: AppColors.purpleDark.withValues(alpha: 0.7),
+                      color: Colors.black,
+                      fontWeight: FontWeight.w700,
                       fontSize: responsive.smallFontSize - 1,
                     ),
               ),
               SizedBox(width: responsive.spacingSmall / 2),
-              const Icon(Icons.arrow_forward_ios,
-                  size: 11, color: AppColors.purpleDark),
+              Icon(Icons.arrow_forward_ios, size: 11, color: Colors.amber[700]),
             ],
           ),
         ],

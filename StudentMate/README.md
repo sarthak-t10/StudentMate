@@ -1,6 +1,6 @@
 # StudentMate
 
-A comprehensive Flutter-based academic productivity application designed to assist students in managing their academic activities efficiently.
+StudentMate is a comprehensive Flutter-based academic productivity application designed to help students manage academic work efficiently on desktop and mobile-friendly targets.
 
 ## Overview
 
@@ -17,7 +17,7 @@ StudentMate is structured in three progressive development phases:
 
 ### Phase 2 – Industry-Level Architecture & Logic
 - MVVM Architecture Implementation
-- Room Database (SQLite) Integration
+- MongoDB and Hive persistence
 - Repository Pattern
 - Business Logic Implementation
 - Attendance Analytics
@@ -31,15 +31,26 @@ StudentMate is structured in three progressive development phases:
 - Advanced Analytics
 - Export Functionality
 
+### Recently Added Features
+- Notes and PYQ module with branch and semester filtering
+- Subject catalog synced across the notes page and admin upload page
+- Admin notes upload panel with real file selection
+- Stored notes uploads loaded back into the student notes screen
+- File opening support for uploaded local or remote files
+- Intro screen and animated gradient-backed UI sections
+- Light, dark, and gold-dark themes with persistent theme selection
+- MongoDB-backed announcements, clubs, calendar, grades, and attendance flows
+
 ## Technical Stack
 
 - **Framework**: Flutter (Dart)
 - **State Management**: Provider / Riverpod
-- **Local Storage**: Hive / SQLite
-- **Backend**: Firebase (Firestore, Authentication)
+- **Local Storage**: Hive
+- **Backend**: MongoDB
 - **UI Components**: Material Design, Custom Widgets
 - **Analytics**: fl_chart
-- **Notifications**: Firebase Cloud Messaging
+- **File Handling**: file_picker, url_launcher, syncfusion_flutter_pdfviewer
+- **Typography**: google_fonts
 
 ## Project Structure
 
@@ -52,6 +63,7 @@ lib/
 ├── repositories/     # Data access layer
 ├── widgets/          # Reusable components
 ├── utils/            # Constants, helpers, and utilities
+├── views/            # Screens including notes, admin upload, intro, auth, home
 └── main.dart         # Application entry point
 ```
 
@@ -61,14 +73,14 @@ lib/
 
 - Flutter 3.0.0 or higher
 - Dart 3.0.0 or higher
-- Android SDK 21 or higher (for Android)
-- Xcode 13 or higher (for iOS)
+- Visual Studio with Desktop development with C++ workload for Windows builds
+- MongoDB running locally or configured through `MONGODB_URI`
 
 ### Installation
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
+   git clone git@github.com:sarthak-t10/StudentMate.git
    cd StudentMate
    ```
 
@@ -79,19 +91,19 @@ lib/
 
 3. Run the application:
    ```bash
-   flutter run
+   flutter run -d windows
    ```
 
 ## Building for Release
 
+### Windows
+```bash
+flutter build windows --release
+```
+
 ### Android
 ```bash
 flutter build apk --release
-```
-
-### iOS
-```bash
-flutter build ios --release
 ```
 
 ## Architecture Overview
@@ -105,6 +117,11 @@ StudentMate follows the MVVM (Model-View-ViewModel) architecture pattern:
 - **Services**: Low-level data operations (API calls, database)
 
 ## Key Features
+
+### Notes and PYQs
+- Subject lists are shared across the notes screen and admin upload screen
+- Uploaded notes can be selected from the student notes page by branch, semester, and subject
+- Student taps open the stored file URL from MongoDB
 
 ### Attendance Module
 - Track daily attendance
@@ -125,6 +142,11 @@ StudentMate follows the MVVM (Model-View-ViewModel) architecture pattern:
 - Attendance trends visualization
 - Study hour progress tracking
 - Interactive charts using fl_chart
+
+### Admin Upload Panel
+- Pick PDF and document files from the file system
+- Save upload metadata to MongoDB
+- Validate branch, semester, subject, upload type, and selected file before saving
 
 ## Development Practices
 
@@ -166,11 +188,16 @@ flutter test
 
 2. **Device not found**
    - List connected devices: `flutter devices`
-   - Check device connection: `adb devices`
+   - For desktop, verify that Windows desktop support is enabled in Flutter
 
-3. **Build errors for Android**
+3. **MongoDB connection issues**
+   - Make sure MongoDB is running locally on port 27017, or set `MONGODB_URI`
+   - On Windows desktop, direct MongoDB access is supported; web builds skip direct DB connections
+
+4. **Build errors for Windows**
+   - Install Visual Studio with C++ desktop workload
    - Clean build: `flutter clean`
-   - Run: `flutter run`
+   - Run: `flutter run -d windows`
 
 ## License
 

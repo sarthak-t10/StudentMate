@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
 import '../utils/app_theme.dart';
 import '../utils/responsive_helper.dart';
 import '../widgets/custom_widgets.dart';
 import '../widgets/responsive_layout_components.dart';
+import '../widgets/animated_gradient_background.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -90,216 +92,259 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.backgroundColor,
-      appBar: AppBar(
-        leading: const AppLogo(),
-        title: const Text('Create Account'),
-        centerTitle: true,
-        elevation: 0,
-      ),
-      body: SafeArea(
-        child: ResponsiveBuilder(
-          builder: (context, responsive) {
-            return SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.all(responsive.horizontalPadding),
-                child: Column(
-                  children: [
-                    CustomTextField(
-                      label: 'Full Name',
-                      hintText: 'Enter your full name',
-                      controller: _fullNameController,
-                      prefixIcon: Icons.person,
-                    ),
-                    SizedBox(height: responsive.spacingLarge),
-                    CustomTextField(
-                      label: 'Email Address',
-                      hintText: 'Enter your email',
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      prefixIcon: Icons.email,
-                    ),
-                    SizedBox(height: responsive.spacingLarge),
-                    CustomTextField(
-                      label: 'Password',
-                      hintText: 'Enter your password',
-                      controller: _passwordController,
-                      obscureText: true,
-                      prefixIcon: Icons.lock,
-                    ),
-                    SizedBox(height: responsive.spacingLarge),
-                    CustomTextField(
-                      label: 'Confirm Password',
-                      hintText: 'Confirm your password',
-                      controller: _confirmPasswordController,
-                      obscureText: true,
-                      prefixIcon: Icons.lock,
-                    ),
-                    SizedBox(height: responsive.spacingLarge),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'User Type',
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    color: AppColors.textPrimaryColor,
-                                    fontSize: responsive.bodyFontSize,
-                                  ),
-                        ),
-                        SizedBox(height: responsive.spacingSmall),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _buildUserTypeButton(
-                                  'Student', UserType.student, responsive),
-                            ),
-                            SizedBox(width: responsive.spacingMedium),
-                            Expanded(
-                              child: _buildUserTypeButton(
-                                  'Faculty', UserType.faculty, responsive),
-                            ),
-                            SizedBox(width: responsive.spacingMedium),
-                            Expanded(
-                              child: _buildUserTypeButton(
-                                  'Admin', UserType.admin, responsive),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: responsive.spacingLarge),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Branch',
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    color: AppColors.textPrimaryColor,
-                                    fontSize: responsive.bodyFontSize,
-                                  ),
-                        ),
-                        SizedBox(height: responsive.spacingSmall),
-                        DropdownButtonFormField<String>(
-                          initialValue: _selectedBranch,
-                          onChanged: (value) {
-                            setState(() =>
-                                _selectedBranch = value ?? _selectedBranch);
-                          },
-                          items: _branches
-                              .map((branch) => DropdownMenuItem(
-                                    value: branch,
-                                    child: Text(branch),
-                                  ))
-                              .toList(),
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(
-                                  responsive.radiusMedium),
-                              borderSide: BorderSide(
-                                color: AppColors.purpleDark.withOpacity(0.2),
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(
-                                  responsive.radiusMedium),
-                              borderSide: BorderSide(
-                                color: AppColors.purpleDark.withOpacity(0.2),
-                              ),
-                            ),
-                            filled: true,
-                            fillColor: AppColors.surface,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: responsive.spacingLarge),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Section',
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    color: AppColors.textPrimaryColor,
-                                    fontSize: responsive.bodyFontSize,
-                                  ),
-                        ),
-                        SizedBox(height: responsive.spacingSmall),
-                        DropdownButtonFormField<String>(
-                          initialValue: _selectedSection,
-                          onChanged: (value) {
-                            setState(() =>
-                                _selectedSection = value ?? _selectedSection);
-                          },
-                          items: _sections
-                              .map((section) => DropdownMenuItem(
-                                    value: section,
-                                    child: Text(section),
-                                  ))
-                              .toList(),
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(
-                                  responsive.radiusMedium),
-                              borderSide: BorderSide(
-                                color: AppColors.purpleDark.withOpacity(0.2),
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(
-                                  responsive.radiusMedium),
-                              borderSide: BorderSide(
-                                color: AppColors.purpleDark.withOpacity(0.2),
-                              ),
-                            ),
-                            filled: true,
-                            fillColor: AppColors.surface,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: responsive.spacingLarge),
-                    SizedBox(
-                      width: double.infinity,
-                      child: GradientButton(
-                        onPressed: _isLoading ? () {} : _handleSignUp,
-                        label: _isLoading ? 'Creating Account...' : 'Sign Up',
+    return AnimatedGradientBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.black26,
+          elevation: 0,
+          title: Text(
+            'Create Account',
+            style: GoogleFonts.orbitron(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1,
+            ),
+          ),
+          centerTitle: true,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ),
+        body: SafeArea(
+          child: ResponsiveBuilder(
+            builder: (context, responsive) {
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.all(responsive.horizontalPadding),
+                  child: Column(
+                    children: [
+                      SizedBox(height: responsive.spacingLarge),
+                      _buildGlassTextField(
+                        label: 'Full Name',
+                        hintText: 'Enter your full name',
+                        controller: _fullNameController,
+                        prefixIcon: Icons.person,
                       ),
-                    ),
-                    SizedBox(height: responsive.spacingLarge),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Already have an account? ',
-                          style: TextStyle(
-                            fontSize: responsive.bodyFontSize,
+                      SizedBox(height: responsive.spacingLarge),
+                      _buildGlassTextField(
+                        label: 'Email Address',
+                        hintText: 'Enter your email',
+                        controller: _emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        prefixIcon: Icons.email,
+                      ),
+                      SizedBox(height: responsive.spacingLarge),
+                      _buildGlassTextField(
+                        label: 'Password',
+                        hintText: 'Enter your password',
+                        controller: _passwordController,
+                        obscureText: true,
+                        prefixIcon: Icons.lock,
+                      ),
+                      SizedBox(height: responsive.spacingLarge),
+                      _buildGlassTextField(
+                        label: 'Confirm Password',
+                        hintText: 'Confirm your password',
+                        controller: _confirmPasswordController,
+                        obscureText: true,
+                        prefixIcon: Icons.lock,
+                      ),
+                      SizedBox(height: responsive.spacingLarge),
+                      _buildFormLabel('User Type'),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildUserTypeButton(
+                                'Student', UserType.student, responsive),
                           ),
+                          SizedBox(width: responsive.spacingMedium),
+                          Expanded(
+                            child: _buildUserTypeButton(
+                                'Faculty', UserType.faculty, responsive),
+                          ),
+                          SizedBox(width: responsive.spacingMedium),
+                          Expanded(
+                            child: _buildUserTypeButton(
+                                'Admin', UserType.admin, responsive),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: responsive.spacingLarge),
+                      _buildGlassDropdown(
+                        label: 'Branch',
+                        value: _selectedBranch,
+                        items: _branches,
+                        onChanged: (value) {
+                          setState(
+                              () => _selectedBranch = value ?? _selectedBranch);
+                        },
+                      ),
+                      SizedBox(height: responsive.spacingLarge),
+                      _buildGlassDropdown(
+                        label: 'Section',
+                        value: _selectedSection,
+                        items: _sections,
+                        onChanged: (value) {
+                          setState(() =>
+                              _selectedSection = value ?? _selectedSection);
+                        },
+                      ),
+                      SizedBox(height: responsive.spacingLarge * 1.5),
+                      SizedBox(
+                        width: double.infinity,
+                        child: _buildGoldenButton(
+                          onPressed: _isLoading ? () {} : _handleSignUp,
+                          label: _isLoading ? 'Creating Account...' : 'Sign Up',
+                          isLoading: _isLoading,
                         ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context)
-                                .pushReplacementNamed('/signin');
-                          },
-                          child: Text(
-                            'Sign In',
-                            style: TextStyle(
+                      ),
+                      SizedBox(height: responsive.spacingLarge),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Already have an account? ',
+                            style: GoogleFonts.orbitron(
                               fontSize: responsive.bodyFontSize,
+                              color: Colors.white70,
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context)
+                                  .pushReplacementNamed('/signin');
+                            },
+                            child: Text(
+                              'Sign In',
+                              style: GoogleFonts.orbitron(
+                                fontSize: responsive.bodyFontSize,
+                                color: const Color(0xFFFFD700),
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: responsive.spacingLarge),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _buildFormLabel(String label) {
+    return Text(
+      label,
+      style: GoogleFonts.orbitron(
+        fontSize: 12,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+        letterSpacing: 0.5,
+      ),
+    );
+  }
+
+  Widget _buildGlassTextField({
+    required String label,
+    required String hintText,
+    required TextEditingController controller,
+    TextInputType keyboardType = TextInputType.text,
+    IconData? prefixIcon,
+    bool obscureText = false,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildFormLabel(label),
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.white24, width: 1),
+            color: Colors.white.withOpacity(0.08),
+          ),
+          child: TextField(
+            controller: controller,
+            keyboardType: keyboardType,
+            obscureText: obscureText,
+            style: GoogleFonts.orbitron(
+              color: Colors.white,
+              fontSize: 14,
+            ),
+            decoration: InputDecoration(
+              hintText: hintText,
+              hintStyle: GoogleFonts.orbitron(
+                color: Colors.white54,
+                fontSize: 14,
+              ),
+              prefixIcon: prefixIcon != null
+                  ? Icon(prefixIcon, color: Colors.white54, size: 20)
+                  : null,
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 14,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGlassDropdown({
+    required String label,
+    required String value,
+    required List<String> items,
+    required ValueChanged<String?> onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildFormLabel(label),
+        const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.white24, width: 1),
+            color: Colors.white.withOpacity(0.08),
+          ),
+          child: DropdownButton<String>(
+            isExpanded: true,
+            value: value,
+            items: items
+                .map((item) => DropdownMenuItem(
+                      value: item,
+                      child: Text(
+                        item,
+                        style: GoogleFonts.orbitron(
+                          color: Colors.black,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ))
+                .toList(),
+            onChanged: onChanged,
+            dropdownColor: Colors.grey[800],
+            style: GoogleFonts.orbitron(
+              color: Colors.white,
+              fontSize: 14,
+            ),
+            underline: Container(),
+            icon: const Icon(Icons.arrow_drop_down, color: Colors.white70),
+          ),
+        ),
+      ],
     );
   }
 
@@ -315,27 +360,83 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
         decoration: BoxDecoration(
           gradient: isSelected
-              ? AppColors.primaryGradient
-              : const LinearGradient(
+              ? const LinearGradient(
+                  colors: [Color(0xFFFFD700), Color(0xFFFFA500)],
+                )
+              : LinearGradient(
                   colors: [
-                    Colors.white,
-                    Colors.white,
+                    Colors.blue.withOpacity(0.1),
+                    Colors.purple.withOpacity(0.1),
                   ],
                 ),
-          borderRadius: BorderRadius.circular(responsive.radiusMedium),
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected
-                ? Colors.transparent
-                : AppColors.purpleDark.withOpacity(0.3),
+            color: isSelected ? const Color(0xFFFFD700) : Colors.white24,
+            width: isSelected ? 2 : 1,
           ),
         ),
         child: Text(
           label,
           textAlign: TextAlign.center,
-          style: TextStyle(
-            color: isSelected ? Colors.white : AppColors.textPrimaryColor,
-            fontWeight: FontWeight.w600,
-            fontSize: responsive.smallFontSize,
+          style: GoogleFonts.orbitron(
+            color: isSelected ? Colors.black87 : Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 12,
+            letterSpacing: 0.5,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGoldenButton({
+    required VoidCallback onPressed,
+    required String label,
+    bool isLoading = false,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        gradient: const LinearGradient(
+          colors: [Color(0xFFFFD700), Color(0xFFFFA500)],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFFFD700).withOpacity(0.4),
+            blurRadius: 20,
+            spreadRadius: 2,
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Center(
+              child: isLoading
+                  ? SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Colors.black.withOpacity(0.7),
+                        ),
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : Text(
+                      label,
+                      style: GoogleFonts.orbitron(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                        letterSpacing: 1,
+                      ),
+                    ),
+            ),
           ),
         ),
       ),

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mongo_dart/mongo_dart.dart' show where;
 import 'package:open_filex/open_filex.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
@@ -13,6 +14,7 @@ import '../services/mongodb_service.dart';
 import '../services/offline_cache_service.dart';
 import '../utils/app_theme.dart';
 import '../widgets/custom_widgets.dart';
+import '../widgets/animated_gradient_background.dart';
 
 // ── Folders screen ───────────────────────────────────────────────────────────
 
@@ -147,8 +149,18 @@ class _StudentDocumentsScreenState extends State<StudentDocumentsScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: const AppLogo(),
-        title: const Text('My Documents'),
+        title: Text(
+          'My Documents',
+          style: GoogleFonts.orbitron(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1,
+          ),
+        ),
         centerTitle: true,
+        backgroundColor: Colors.black26,
+        elevation: 0,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showCreateFolderDialog,
@@ -157,78 +169,81 @@ class _StudentDocumentsScreenState extends State<StudentDocumentsScreen> {
         tooltip: 'New Folder',
         child: const Icon(Icons.create_new_folder),
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _folders.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.folder_open,
-                          size: 72, color: AppColors.purpleDark),
-                      const SizedBox(height: AppSpacing.md),
-                      Text('No folders yet',
-                          style: Theme.of(context).textTheme.titleLarge),
-                      const SizedBox(height: AppSpacing.sm),
-                      Text('Tap + to create a folder',
-                          style: Theme.of(context).textTheme.bodyMedium),
-                    ],
-                  ),
-                )
-              : ListView.builder(
-                  padding: const EdgeInsets.all(AppSpacing.lg),
-                  itemCount: _folders.length,
-                  itemBuilder: (context, index) {
-                    final folder = _folders[index];
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: AppSpacing.md),
-                      child: GradientCard(
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => FolderDocumentsScreen(
-                              folderId: folder['_id'] as String,
-                              folderName: folder['name'] as String,
-                              userId: _userId!,
+      body: AnimatedGradientBackground(
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : _folders.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.folder_open,
+                            size: 72, color: AppColors.purpleDark),
+                        const SizedBox(height: AppSpacing.md),
+                        Text('No folders yet',
+                            style: Theme.of(context).textTheme.titleLarge),
+                        const SizedBox(height: AppSpacing.sm),
+                        Text('Tap + to create a folder',
+                            style: Theme.of(context).textTheme.bodyMedium),
+                      ],
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.all(AppSpacing.lg),
+                    itemCount: _folders.length,
+                    itemBuilder: (context, index) {
+                      final folder = _folders[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                        child: GradientCard(
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => FolderDocumentsScreen(
+                                folderId: folder['_id'] as String,
+                                folderName: folder['name'] as String,
+                                userId: _userId!,
+                              ),
                             ),
+                          ).then((_) => _loadFolders()),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(AppSpacing.md),
+                                decoration: BoxDecoration(
+                                  gradient: AppColors.primaryGradient,
+                                  borderRadius:
+                                      BorderRadius.circular(AppRadius.md),
+                                ),
+                                child: const Icon(Icons.folder,
+                                    color: Colors.white, size: 28),
+                              ),
+                              const SizedBox(width: AppSpacing.md),
+                              Expanded(
+                                child: Text(
+                                  folder['name'] as String,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium
+                                      ?.copyWith(fontWeight: FontWeight.w600),
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.delete_outline,
+                                    color: AppColors.errorColor),
+                                onPressed: () =>
+                                    _deleteFolder(folder['_id'] as String),
+                              ),
+                              const Icon(Icons.arrow_forward_ios,
+                                  size: 14,
+                                  color: AppColors.textSecondaryColor),
+                            ],
                           ),
-                        ).then((_) => _loadFolders()),
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(AppSpacing.md),
-                              decoration: BoxDecoration(
-                                gradient: AppColors.primaryGradient,
-                                borderRadius:
-                                    BorderRadius.circular(AppRadius.md),
-                              ),
-                              child: const Icon(Icons.folder,
-                                  color: Colors.white, size: 28),
-                            ),
-                            const SizedBox(width: AppSpacing.md),
-                            Expanded(
-                              child: Text(
-                                folder['name'] as String,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
-                                    ?.copyWith(fontWeight: FontWeight.w600),
-                              ),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete_outline,
-                                  color: AppColors.errorColor),
-                              onPressed: () =>
-                                  _deleteFolder(folder['_id'] as String),
-                            ),
-                            const Icon(Icons.arrow_forward_ios,
-                                size: 14, color: AppColors.textSecondaryColor),
-                          ],
                         ),
-                      ),
-                    );
-                  },
-                ),
+                      );
+                    },
+                  ),
+      ),
     );
   }
 }

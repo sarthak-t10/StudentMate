@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
 class MongoDBService {
@@ -22,6 +23,12 @@ class MongoDBService {
   );
 
   static Future<Db> getDb() async {
+    if (kIsWeb) {
+      throw UnsupportedError(
+        'Direct MongoDB connections are not supported on web. Run the Windows desktop app or use a backend API.',
+      );
+    }
+
     if (_db == null || !_db!.isConnected) {
       _db = await Db.create(_connectionString);
       await _db!.open();

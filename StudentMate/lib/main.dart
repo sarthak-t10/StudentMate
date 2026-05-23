@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'services/auth_service.dart';
@@ -5,10 +6,13 @@ import 'services/mongodb_service.dart';
 import 'services/club_event_service.dart';
 import 'services/theme_service.dart';
 import 'utils/app_theme.dart';
+import 'views/intro_screen.dart';
 import 'views/sign_in_screen.dart';
 import 'views/sign_up_screen.dart';
 import 'views/home_screen.dart';
 import 'views/profile_screen.dart';
+import 'views/notes_screen.dart';
+import 'views/admin_upload_screen.dart';
 
 late ThemeService themeService;
 final themeModeNotifier = ValueNotifier<AppThemeMode>(AppThemeMode.light);
@@ -43,10 +47,16 @@ void main() async {
     debugPrint('✗ Club Event Service initialization failed: $e');
   }
 
-  // Initialize MongoDB connection
+  // Initialize MongoDB connection only on platforms that support the driver.
   try {
-    await MongoDBService.getDb();
-    debugPrint('MongoDB connected successfully');
+    if (!kIsWeb) {
+      await MongoDBService.getDb();
+      debugPrint('MongoDB connected successfully');
+    } else {
+      debugPrint(
+        'MongoDB connection skipped on web. Use the Windows desktop app for direct MongoDB access.',
+      );
+    }
   } catch (e) {
     debugPrint('MongoDB connection failed: $e');
   }
@@ -123,6 +133,8 @@ class _StudentMateAppState extends State<StudentMateApp> {
             '/signup': (context) => const SignUpScreen(),
             '/home': (context) => const HomeScreen(),
             '/profile': (context) => const ProfileScreen(),
+            '/notes': (context) => const NotesScreen(),
+            '/admin-upload': (context) => const AdminUploadScreen(),
           },
         );
       },
@@ -140,7 +152,7 @@ class AuthWrapper extends StatelessWidget {
     if (authService.isUserLoggedIn()) {
       return const HomeScreen();
     } else {
-      return const SignInScreen();
+      return const IntroScreen();
     }
   }
 }

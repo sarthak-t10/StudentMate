@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../models/announcement_model.dart';
 import '../models/user_model.dart';
 import '../services/announcement_service.dart';
@@ -6,6 +7,7 @@ import '../services/auth_service.dart';
 import '../utils/app_theme.dart';
 import '../utils/responsive_helper.dart';
 import '../widgets/announcement_widgets.dart';
+import '../widgets/animated_gradient_background.dart';
 
 class StudentAnnouncementsScreen extends StatefulWidget {
   final User? initialUser;
@@ -154,7 +156,16 @@ class _StudentAnnouncementsScreenState extends State<StudentAnnouncementsScreen>
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Announcements'),
+        title: Text(
+          'Announcements',
+          style: GoogleFonts.orbitron(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1,
+          ),
+        ),
+        backgroundColor: Colors.black26,
         elevation: 0,
         bottom: TabBar(
           controller: _tabController,
@@ -173,7 +184,9 @@ class _StudentAnnouncementsScreenState extends State<StudentAnnouncementsScreen>
           ],
         ),
       ),
-      body: _buildBody(isMobile),
+      body: AnimatedGradientBackground(
+        child: _buildBody(isMobile),
+      ),
     );
   }
 

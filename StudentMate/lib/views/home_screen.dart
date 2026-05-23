@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mongo_dart/mongo_dart.dart' show where;
 import 'package:uuid/uuid.dart';
 import '../models/user_model.dart';
@@ -7,6 +8,7 @@ import '../services/mongodb_service.dart';
 import '../utils/app_theme.dart';
 import '../utils/responsive_helper.dart';
 import '../widgets/custom_widgets.dart';
+import '../widgets/animated_gradient_background.dart';
 import 'academics_screen.dart';
 import 'club_screen.dart';
 import 'calendar_screen.dart';
@@ -16,6 +18,7 @@ import 'admin_academics_screen.dart';
 import 'admin_club_screen.dart';
 import 'admin_calendar_screen.dart';
 import 'admin_create_announcement_screen.dart';
+import 'admin_upload_screen.dart';
 import 'admin_settings_screen.dart';
 import 'faculty_academic_screen.dart';
 import 'faculty_calendar_screen.dart';
@@ -170,304 +173,348 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildStudentHome() {
-    return Scaffold(
-      appBar: AppBar(
-        leading: const AppLogo(),
-        title: const Text('StudentMate'),
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: _handleLogout,
+    return AnimatedGradientBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.black26,
+          elevation: 0,
+          title: Text(
+            'StudentMate',
+            style: GoogleFonts.orbitron(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1,
+            ),
           ),
-        ],
-      ),
-      body: SafeArea(
-        child: Builder(
-          builder: (context) {
-            final responsive = ResponsiveHelper(context);
-            return SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.all(responsive.horizontalPadding),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    _buildProfileHeader(),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Student Modules',
-                        style:
-                            Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: responsive.titleFontSize,
-                                ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.logout, color: Colors.white),
+              onPressed: _handleLogout,
+            ),
+          ],
+        ),
+        body: SafeArea(
+          child: Builder(
+            builder: (context) {
+              final responsive = ResponsiveHelper(context);
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.all(responsive.horizontalPadding),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      _buildProfileHeader(),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Student Modules',
+                          style: GoogleFonts.orbitron(
+                            fontWeight: FontWeight.w900,
+                            fontSize: responsive.titleFontSize,
+                            color: Colors.black,
+                            letterSpacing: 1,
+                          ),
+                        ),
                       ),
-                    ),
-                    SizedBox(height: responsive.spacingLarge),
-                    GridView.count(
-                      crossAxisCount: responsive.cardGridColumns,
-                      childAspectRatio: 0.6,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      crossAxisSpacing: responsive.spacingMedium,
-                      mainAxisSpacing: responsive.spacingMedium,
-                      children: [
-                        ModuleCard(
-                          title: 'Academics',
-                          icon: Icons.school,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const AcademicsScreen()),
+                      SizedBox(height: responsive.spacingLarge),
+                      GridView.count(
+                        crossAxisCount: responsive.cardGridColumns,
+                        childAspectRatio: 0.6,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        crossAxisSpacing: responsive.spacingMedium,
+                        mainAxisSpacing: responsive.spacingMedium,
+                        children: [
+                          ModuleCard(
+                            title: 'Academics',
+                            icon: Icons.school,
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const AcademicsScreen()),
+                            ),
                           ),
-                        ),
-                        ModuleCard(
-                          title: 'Club',
-                          icon: Icons.groups,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const ClubScreen()),
+                          ModuleCard(
+                            title: 'Club',
+                            icon: Icons.groups,
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const ClubScreen()),
+                            ),
                           ),
-                        ),
-                        ModuleCard(
-                          title: 'Calendar',
-                          icon: Icons.calendar_today,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const CalendarScreen()),
+                          ModuleCard(
+                            title: 'Calendar',
+                            icon: Icons.calendar_today,
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const CalendarScreen()),
+                            ),
                           ),
-                        ),
-                        ModuleCard(
-                          title: 'My Documents',
-                          icon: Icons.folder_copy,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const StudentDocumentsScreen()),
+                          ModuleCard(
+                            title: 'My Documents',
+                            icon: Icons.folder_copy,
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const StudentDocumentsScreen()),
+                            ),
                           ),
-                        ),
-                        ModuleCard(
-                          title: 'Announcements',
-                          icon: Icons.notifications_active,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const StudentAnnouncementsScreen()),
+                          ModuleCard(
+                            title: 'Announcements',
+                            icon: Icons.notifications_active,
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const StudentAnnouncementsScreen()),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );
   }
 
   Widget _buildAdminHome() {
-    return Scaffold(
-      appBar: AppBar(
-        leading: const AppLogo(),
-        title: const Text('Admin Dashboard'),
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: _handleLogout,
+    return AnimatedGradientBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.black26,
+          elevation: 0,
+          title: Text(
+            'Admin Dashboard',
+            style: GoogleFonts.orbitron(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1,
+            ),
           ),
-        ],
-      ),
-      body: SafeArea(
-        child: Builder(
-          builder: (context) {
-            final responsive = ResponsiveHelper(context);
-            return SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.all(responsive.horizontalPadding),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Admin Controls',
-                      style: Theme.of(context)
-                          .textTheme
-                          .headlineSmall
-                          ?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.purpleDark,
-                              fontSize: responsive.titleFontSize),
-                    ),
-                    SizedBox(height: responsive.spacingLarge),
-                    GridView.count(
-                      crossAxisCount: responsive.cardGridColumns,
-                      childAspectRatio: responsive.cardAspectRatio,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      crossAxisSpacing: responsive.spacingMedium,
-                      mainAxisSpacing: responsive.spacingMedium,
-                      children: [
-                        ModuleCard(
-                          title: 'Student Academics',
-                          icon: Icons.school,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const AdminAcademicsScreen()),
-                          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.logout, color: Colors.white),
+              onPressed: _handleLogout,
+            ),
+          ],
+        ),
+        body: SafeArea(
+          child: Builder(
+            builder: (context) {
+              final responsive = ResponsiveHelper(context);
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.all(responsive.horizontalPadding),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Admin Controls',
+                        style: GoogleFonts.orbitron(
+                          fontWeight: FontWeight.w900,
+                          fontSize: responsive.titleFontSize,
+                          color: Colors.black,
+                          letterSpacing: 1,
                         ),
-                        ModuleCard(
-                          title: 'Manage Clubs',
-                          icon: Icons.event,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const AdminClubScreen()),
+                      ),
+                      SizedBox(height: responsive.spacingLarge),
+                      GridView.count(
+                        crossAxisCount: responsive.cardGridColumns,
+                        childAspectRatio: responsive.cardAspectRatio,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        crossAxisSpacing: responsive.spacingMedium,
+                        mainAxisSpacing: responsive.spacingMedium,
+                        children: [
+                          ModuleCard(
+                            title: 'Student Academics',
+                            icon: Icons.school,
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const AdminAcademicsScreen()),
+                            ),
                           ),
-                        ),
-                        ModuleCard(
-                          title: 'Manage Calendar',
-                          icon: Icons.calendar_month,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const AdminCalendarScreen()),
+                          ModuleCard(
+                            title: 'Manage Clubs',
+                            icon: Icons.event,
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const AdminClubScreen()),
+                            ),
                           ),
-                        ),
-                        ModuleCard(
-                          title: 'Create Announcement',
-                          icon: Icons.announcement,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const AdminCreateAnnouncementScreen()),
+                          ModuleCard(
+                            title: 'Manage Calendar',
+                            icon: Icons.calendar_month,
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const AdminCalendarScreen()),
+                            ),
                           ),
-                        ),
-                        ModuleCard(
-                          title: 'Database Settings',
-                          icon: Icons.storage,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const AdminSettingsScreen()),
+                          ModuleCard(
+                            title: 'Create Announcement',
+                            icon: Icons.announcement,
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const AdminCreateAnnouncementScreen()),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                          ModuleCard(
+                            title: 'Upload Notes',
+                            icon: Icons.upload_file,
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const AdminUploadScreen()),
+                            ),
+                          ),
+                          ModuleCard(
+                            title: 'Database Settings',
+                            icon: Icons.storage,
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const AdminSettingsScreen()),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );
   }
 
   Widget _buildFacultyHome() {
-    return Scaffold(
-      appBar: AppBar(
-        leading: const AppLogo(),
-        title: const Text('Faculty Dashboard'),
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: _handleLogout,
+    return AnimatedGradientBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.black26,
+          elevation: 0,
+          title: Text(
+            'Faculty Dashboard',
+            style: GoogleFonts.orbitron(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1,
+            ),
           ),
-        ],
-      ),
-      body: SafeArea(
-        child: Builder(
-          builder: (context) {
-            final responsive = ResponsiveHelper(context);
-            return SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.all(responsive.horizontalPadding),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    _buildProfileHeader(),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Faculty Controls',
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineSmall
-                            ?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.purpleDark,
-                                fontSize: responsive.titleFontSize),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.logout, color: Colors.white),
+              onPressed: _handleLogout,
+            ),
+          ],
+        ),
+        body: SafeArea(
+          child: Builder(
+            builder: (context) {
+              final responsive = ResponsiveHelper(context);
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.all(responsive.horizontalPadding),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      _buildProfileHeader(),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Faculty Controls',
+                          style: GoogleFonts.orbitron(
+                            fontWeight: FontWeight.w900,
+                            fontSize: responsive.titleFontSize,
+                            color: Colors.black,
+                            letterSpacing: 1,
+                            decoration: TextDecoration.underline,
+                            decorationColor: Colors.yellow[200],
+                            decorationThickness: 3,
+                          ),
+                        ),
                       ),
-                    ),
-                    SizedBox(height: responsive.spacingLarge),
-                    GridView.count(
-                      crossAxisCount: responsive.cardGridColumns,
-                      childAspectRatio: responsive.cardAspectRatio,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      crossAxisSpacing: responsive.spacingMedium,
-                      mainAxisSpacing: responsive.spacingMedium,
-                      children: [
-                        ModuleCard(
-                          title: 'Academics',
-                          icon: Icons.school,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const FacultyAcademicScreen()),
+                      SizedBox(height: responsive.spacingLarge),
+                      GridView.count(
+                        crossAxisCount: responsive.cardGridColumns,
+                        childAspectRatio: responsive.cardAspectRatio,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        crossAxisSpacing: responsive.spacingMedium,
+                        mainAxisSpacing: responsive.spacingMedium,
+                        children: [
+                          ModuleCard(
+                            title: 'Academics',
+                            icon: Icons.school,
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const FacultyAcademicScreen()),
+                            ),
                           ),
-                        ),
-                        ModuleCard(
-                          title: 'View Calendar',
-                          icon: Icons.calendar_today,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const FacultyCalendarScreen()),
+                          ModuleCard(
+                            title: 'View Calendar',
+                            icon: Icons.calendar_today,
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const FacultyCalendarScreen()),
+                            ),
                           ),
-                        ),
-                        ModuleCard(
-                          title: 'Documents',
-                          icon: Icons.folder_copy,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const StudentDocumentsScreen()),
+                          ModuleCard(
+                            title: 'Documents',
+                            icon: Icons.folder_copy,
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const StudentDocumentsScreen()),
+                            ),
                           ),
-                        ),
-                        ModuleCard(
-                          title: 'Create Announcement',
-                          icon: Icons.notifications,
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const FacultyCreateAnnouncementScreen()),
+                          ModuleCard(
+                            title: 'Create Announcement',
+                            icon: Icons.notifications,
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const FacultyCreateAnnouncementScreen()),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );

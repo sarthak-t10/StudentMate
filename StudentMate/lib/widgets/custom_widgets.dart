@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../utils/app_theme.dart';
 import '../utils/logo_data.dart';
 
@@ -221,15 +222,29 @@ class _GradientCardState extends State<GradientCard> {
               borderRadius: BorderRadius.circular(AppRadius.lg),
             ),
             elevation: 0,
+            color: Colors.transparent,
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(AppRadius.lg),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.blue.withOpacity(0.35),
+                    Colors.blue[700]!.withOpacity(0.35),
+                  ],
+                ),
                 border: Border.all(
-                  color: _isHovered
-                      ? AppColors.purpleDark.withOpacity(0.3)
-                      : AppColors.purpleDark.withOpacity(0.1),
+                  color: Colors.blue.withOpacity(0.5),
                   width: 1.5,
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.blue.withOpacity(0.05),
+                    blurRadius: 20,
+                    spreadRadius: 1,
+                  ),
+                ],
               ),
               child: Padding(
                 padding: widget.padding,
@@ -365,10 +380,11 @@ class ModuleCard extends StatelessWidget {
       padding: const EdgeInsets.all(AppSpacing.md),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 70,
-            height: 70,
+            width: 64,
+            height: 64,
             decoration: BoxDecoration(
               gradient: AppColors.primaryGradient,
               borderRadius: BorderRadius.circular(AppRadius.xl),
@@ -376,19 +392,30 @@ class ModuleCard extends StatelessWidget {
             child: Icon(
               icon,
               color: Colors.white,
-              size: 36,
+              size: 32,
             ),
           ),
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black,
-                ),
+          const SizedBox(height: 6),
+          Flexible(
+            child: Text(
+              title,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.orbitron(
+                fontWeight: FontWeight.w900,
+                fontSize: 14.5,
+                color: Colors.black,
+                letterSpacing: 0.9,
+                shadows: [
+                  Shadow(
+                    color: Colors.yellow.withOpacity(0.45),
+                    offset: const Offset(1, 1),
+                    blurRadius: 2,
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),

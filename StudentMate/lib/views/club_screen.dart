@@ -1,12 +1,14 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/club_event_model.dart';
 import '../services/club_event_service.dart';
 import '../services/auth_service.dart';
 import '../utils/app_theme.dart';
 import '../utils/responsive_helper.dart';
+import '../widgets/animated_gradient_background.dart';
 
 class ClubScreen extends StatefulWidget {
   const ClubScreen({Key? key}) : super(key: key);
@@ -206,88 +208,100 @@ class _ClubScreenState extends State<ClubScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Club Events'),
+        title: Text(
+          'Club Events',
+          style: GoogleFonts.orbitron(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1,
+          ),
+        ),
+        backgroundColor: Colors.black26,
         elevation: 0,
+        centerTitle: true,
       ),
-      body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : Column(
-              children: [
-                // Filter Chips
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  padding: EdgeInsets.all(responsive.horizontalPadding),
-                  child: Row(
-                    children: [
-                      _FilterChip(
-                        label: 'All',
-                        isSelected: _selectedFilter == 'All',
-                        onTap: () => _onFilterChanged('All'),
-                      ),
-                      SizedBox(width: responsive.spacingSmall),
-                      _FilterChip(
-                        label: 'Upcoming',
-                        isSelected: _selectedFilter == 'Upcoming',
-                        onTap: () => _onFilterChanged('Upcoming'),
-                      ),
-                      SizedBox(width: responsive.spacingSmall),
-                      _FilterChip(
-                        label: 'Registered',
-                        isSelected: _selectedFilter == 'Registered',
-                        onTap: () => _onFilterChanged('Registered'),
-                      ),
-                    ],
-                  ),
-                ),
-                // Events List
-                Expanded(
-                  child: _filteredEvents.isEmpty
-                      ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.event_note,
-                                  size: 64, color: Colors.grey[400]),
-                              SizedBox(height: responsive.spacingMedium),
-                              Text(
-                                _selectedFilter == 'Registered'
-                                    ? 'No registered events yet'
-                                    : 'No events available',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
-                                    ?.copyWith(color: Colors.grey[600]),
-                              ),
-                            ],
-                          ),
-                        )
-                      : PageView.builder(
-                          scrollDirection: Axis.vertical,
-                          physics: const PageScrollPhysics(),
-                          itemCount: _filteredEvents.length,
-                          itemBuilder: (context, index) {
-                            final event = _filteredEvents[index];
-                            return Padding(
-                              padding:
-                                  EdgeInsets.all(responsive.horizontalPadding),
-                              child: _EventCard(
-                                event: event,
-                                isEventPast: _isEventPast(event.eventDate),
-                                isRegistered: _currentUserId != null &&
-                                    event.isRegisteredBy(_currentUserId!),
-                                onRegister: () => _registerForEvent(event),
-                                onCancelRegistration: () =>
-                                    _cancelRegistration(event),
-                                responsive: responsive,
-                              ),
-                            );
-                          },
+      body: AnimatedGradientBackground(
+        child: _isLoading
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : Column(
+                children: [
+                  // Filter Chips
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    padding: EdgeInsets.all(responsive.horizontalPadding),
+                    child: Row(
+                      children: [
+                        _FilterChip(
+                          label: 'All',
+                          isSelected: _selectedFilter == 'All',
+                          onTap: () => _onFilterChanged('All'),
                         ),
-                ),
-              ],
-            ),
+                        SizedBox(width: responsive.spacingSmall),
+                        _FilterChip(
+                          label: 'Upcoming',
+                          isSelected: _selectedFilter == 'Upcoming',
+                          onTap: () => _onFilterChanged('Upcoming'),
+                        ),
+                        SizedBox(width: responsive.spacingSmall),
+                        _FilterChip(
+                          label: 'Registered',
+                          isSelected: _selectedFilter == 'Registered',
+                          onTap: () => _onFilterChanged('Registered'),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Events List
+                  Expanded(
+                    child: _filteredEvents.isEmpty
+                        ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.event_note,
+                                    size: 64, color: Colors.grey[400]),
+                                SizedBox(height: responsive.spacingMedium),
+                                Text(
+                                  _selectedFilter == 'Registered'
+                                      ? 'No registered events yet'
+                                      : 'No events available',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium
+                                      ?.copyWith(color: Colors.grey[600]),
+                                ),
+                              ],
+                            ),
+                          )
+                        : PageView.builder(
+                            scrollDirection: Axis.vertical,
+                            physics: const PageScrollPhysics(),
+                            itemCount: _filteredEvents.length,
+                            itemBuilder: (context, index) {
+                              final event = _filteredEvents[index];
+                              return Padding(
+                                padding: EdgeInsets.all(
+                                    responsive.horizontalPadding),
+                                child: _EventCard(
+                                  event: event,
+                                  isEventPast: _isEventPast(event.eventDate),
+                                  isRegistered: _currentUserId != null &&
+                                      event.isRegisteredBy(_currentUserId!),
+                                  onRegister: () => _registerForEvent(event),
+                                  onCancelRegistration: () =>
+                                      _cancelRegistration(event),
+                                  responsive: responsive,
+                                ),
+                              );
+                            },
+                          ),
+                  ),
+                ],
+              ),
+      ),
     );
   }
 }
